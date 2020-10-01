@@ -50,7 +50,7 @@ void setup() {
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
 
-    if (client.connect("ESP8266Client", mqttUser, mqttPassword )) {
+    if (client.connect(mqttClientID, mqttUser, mqttPassword )) {
 
       Serial.println("connected");
 

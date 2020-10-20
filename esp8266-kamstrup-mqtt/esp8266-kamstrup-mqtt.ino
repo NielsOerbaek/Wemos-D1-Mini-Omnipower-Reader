@@ -84,6 +84,7 @@ void loop() {
       VectorView frame = streamParser.getFrame();
       if (streamParser.getContentType() == MbusStreamParser::COMPLETE_FRAME) {
         DEBUG_PRINTLN("Frame complete");
+        digitalWrite(LED_BUILTIN, LOW);
         if (!decrypt(frame))
         {
           DEBUG_PRINTLN("Decryption failed");
@@ -93,6 +94,7 @@ void loop() {
           sendmsg(String(mqtt_topic)+"/decryption_failed","0");
           sendData(md);
         }
+        digitalWrite(LED_BUILTIN, HIGH);
       }
     }
   }
@@ -247,12 +249,11 @@ void hexStr2bArr(uint8_t* dest, const char* source, int bytes_n)
 void sendmsg(String topic, String payload) {
   if (client.connected() && WiFi.status() == WL_CONNECTED) {
     // If we are connected to WiFi and MQTT, send.
-    digitalWrite(LED_BUILTIN, LOW);
     client.publish(topic.c_str(), payload.c_str());
-    delay(100);
-    digitalWrite(LED_BUILTIN, HIGH);    
+    delay(10);
   } else {
     // Otherwise, restart the chip, hoping that the issue resolved itself.
+    delay(60*1000);
     ESP.restart();
   }
 }
